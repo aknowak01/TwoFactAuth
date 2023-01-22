@@ -4,8 +4,6 @@ from time import sleep
 from tkinter import *
 import sqlite3 as sql
 import hashlib
-from tkinter.ttk import Treeview
-from tkintertable import TableCanvas
 
 
 class gmail:
@@ -15,8 +13,7 @@ class gmail:
 
 
 def code_hash(password):
-    hashed_password = hashlib.sha256(password.encode()).hexdigest()
-    return hashed_password
+    return hashlib.sha256(password.encode()).hexdigest()
 
 
 def hash_verify(password, hashed_password):
@@ -97,6 +94,12 @@ def send_verification_email(username, password, verification_key):
 class StartWindow(Tk):
     def __init__(self):
         super().__init__()
+        self.title("Two factor authentication system")
+        self.geometry("700x500")
+        self.configure(bg="#d3d3d3")
+        self.copyrigth_label = Label(self, text="© 2022 Arka")
+        self.copyrigth_label.configure(bg="#d3d3d3")
+        self.copyrigth_label.pack(side=BOTTOM, anchor=S)
 
         self.button1 = Button(self, text="Sign in", command=self.go_to_window2)
         self.button1.pack()
@@ -116,9 +119,14 @@ class StartWindow(Tk):
 class LoginWindow(Tk):
     def __init__(self):
         super().__init__()
+        self.title("Two factor authentication system")
+        self.geometry("700x500")
+        self.configure(bg="#d3d3d3")
+
         self.label = Label(self, text="This is Window 2")
         self.label = Label(self, text="Name:")
         self.label.grid(row=0, column=0)
+
         self.username_entry = Entry(self)
         self.username_entry.grid(row=0, column=1)
 
@@ -156,6 +164,10 @@ class LoginWindow(Tk):
 class RegisterWindow(Tk):
     def __init__(self):
         super().__init__()
+        self.title("Two factor authentication system")
+        self.geometry("700x500")
+        self.configure(bg="#d3d3d3")
+
         self.label = Label(self, text="Login:")
         self.label.grid(row=0, column=0)
         self.username_entry = Entry(self)
@@ -186,9 +198,7 @@ class RegisterWindow(Tk):
                 if send_verification_email(self.email_entry.get(), gmail.mail_password, gmail.key):
                     self.label.config(text="Verification key sent to your email.")
                     insert_data(self.username_entry.get(), self.email_entry.get(), self.password_entry.get(), gmail.key)
-                    sleep(2)
                     self.label.config(text="Registered successful.")
-                    sleep(2)
                     self.destroy()
                     mainwindow = MainWindow()
                 else:
@@ -200,6 +210,10 @@ class RegisterWindow(Tk):
 
 class MainWindow(Tk):
     def __init__(self):
+        self.title("Two factor authentication system")
+        self.geometry("700x500")
+        self.configure(bg="#d3d3d3")
+
         super().__init__()
         self.listbox = Listbox(self, width=100, height=10)
         self.listbox.pack()
