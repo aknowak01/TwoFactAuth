@@ -1,14 +1,14 @@
 import smtplib
 from sqlite3 import Error
-from time import sleep
+
 from tkinter import *
 import sqlite3 as sql
 import hashlib
 
 
-class gmail:
-    mail_password = "wbmhvqzujspoprnv"
-    mail_user = "Fason199@gmail.com"
+class Gmail:
+    mail_password = ""
+    mail_user = ""
     key = ""
 
 
@@ -50,8 +50,7 @@ def user_login_verification(username, password, verification_key):
 
 def create_conection():
     try:
-        conn = sql.connect('identifier.sqlite')
-        return conn
+        return sql.connect('identifier.sqlite')
     except Error:
         print(Error)
 
@@ -77,15 +76,15 @@ def key_generator():
     return result_str
 
 
-def send_verification_email(username, password, verification_key):
+def send_verification_email(username, verification_key):
     try:
-        server = smtplib.SMTP('smtp.gmail.com', 587)
+        server = smtplib.SMTP('smtp.Gmail.com', 587)
         server.starttls()
-        server.login(gmail.mail_user, gmail.mail_password)
+        server.login(Gmail.mail_user, Gmail.mail_password)
         subject = "Verification key"
         body = "Your verification key is: " + verification_key
         message = f'Subject: {subject}\n\n{body}'
-        server.sendmail(gmail.mail_user, username, message)
+        server.sendmail(Gmail.mail_user, username, message)
         return True
     except:
         return False
@@ -97,7 +96,7 @@ class StartWindow(Tk):
         self.title("Two factor authentication system")
         self.geometry("700x500")
         self.configure(bg="#d3d3d3")
-        self.copyrigth_label = Label(self, text="© 2022 Arka")
+        self.copyrigth_label = Label(self, text="© 2022 Two factor authentication system. MIT License.")
         self.copyrigth_label.configure(bg="#d3d3d3")
         self.copyrigth_label.pack(side=BOTTOM, anchor=S)
 
@@ -109,11 +108,11 @@ class StartWindow(Tk):
 
     def go_to_window2(self):
         self.destroy()
-        loginwindow = LoginWindow()
+        LoginWindow()
 
     def go_to_window3(self):
         self.destroy()
-        registerwindow = RegisterWindow()
+        RegisterWindow()
 
 
 class LoginWindow(Tk):
@@ -155,7 +154,7 @@ class LoginWindow(Tk):
                                        self.verification_key_entry.get()):
                 self.label.config(text="Login successful.")
                 self.destroy()
-                mainwindow = MainWindow()
+                MainWindow()
 
             else:
                 self.label.config(text="Login failed.")
@@ -190,17 +189,17 @@ class RegisterWindow(Tk):
         self.label.grid(row=4, column=0)
 
     def on_register(self):
-        gmail.key = key_generator()
+        Gmail.key = key_generator()
         if self.username_entry == "" or self.password_entry == "" or self.email_entry == "":
             self.label.config(text="Please fill in all fields.")
         else:
             if not user_register_verification(self.username_entry.get()):
-                if send_verification_email(self.email_entry.get(), gmail.mail_password, gmail.key):
+                if send_verification_email(self.email_entry.get(), Gmail.key):
                     self.label.config(text="Verification key sent to your email.")
-                    insert_data(self.username_entry.get(), self.email_entry.get(), self.password_entry.get(), gmail.key)
+                    insert_data(self.username_entry.get(), self.email_entry.get(), self.password_entry.get(), Gmail.key)
                     self.label.config(text="Registered successful.")
                     self.destroy()
-                    mainwindow = MainWindow()
+                    MainWindow()
                 else:
                     self.label.config(text="Error email not sent.")
 
@@ -210,11 +209,10 @@ class RegisterWindow(Tk):
 
 class MainWindow(Tk):
     def __init__(self):
+        super().__init__()
         self.title("Two factor authentication system")
         self.geometry("700x500")
         self.configure(bg="#d3d3d3")
-
-        super().__init__()
         self.listbox = Listbox(self, width=100, height=10)
         self.listbox.pack()
 
@@ -236,6 +234,5 @@ class MainWindow(Tk):
         con.close()
 
 
-startwindow = StartWindow()
 conn = create_conection()
-startwindow.mainloop()
+StartWindow().mainloop()
